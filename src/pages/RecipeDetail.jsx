@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import Spinner from "./spinner";
 import ErrorPage from "./Error";
+import useLoading from "../hooks/useLoading";
 
 const Dummyrecipe = {
   id: 1,
@@ -41,20 +42,22 @@ function RecipeDetail() {
   const { id } = useParams();
   console.log(id);
   const [recipe, setRecipe] = useState({});
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+  const { loading, startLoading, stopLoading } = useLoading();
   const [errorMsg, setErrorMsg] = useState("");
   async function fetchRecipe() {
+    startLoading();
     try {
       const { data } = await axios(`https://dummyjson.com/recipes/${id}`);
       // console.log(data);
       setRecipe(data);
       // console.log(data);
 
-      setLoading(false);
+      stopLoading();
       setErrorMsg("");
       return data;
     } catch (e) {
-      setLoading(false);
+      stopLoading();
       setErrorMsg(
         e.response?.status === 404
           ? "Recipe not found"
